@@ -1,5 +1,7 @@
 {
   "name": "administracion_usuarios_app",
-  "integrations": {},
+  "integrations": {
+    "cordova": {}
+  },
   "type": "angular"
 }
