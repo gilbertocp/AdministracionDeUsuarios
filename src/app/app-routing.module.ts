@@ -1,5 +1,8 @@
 import { NgModule } from '@angular/core';
-import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { PreloadAllModules, RouterModule, Routes, CanActivate } from '@angular/router';
+import { AuthGuard } from './guards/auth.guard';
+import { CanReadGuard } from './guards/can-read.guard';
+import { AdminGuard } from './guards/admin.guard';
 
 const routes: Routes = [
   {
@@ -9,15 +12,18 @@ const routes: Routes = [
   },
   {
     path: 'login',
-    loadChildren: () => import('./pages/login/login.module').then( m => m.LoginPageModule)
+    loadChildren: () => import('./pages/login/login.module').then( m => m.LoginPageModule),
+    canActivate: [AuthGuard]
   },
   {
     path: 'admin-dashboard',
-    loadChildren: () => import('./pages/admin-dashboard/admin-dashboard.module').then( m => m.AdminDashboardPageModule)
+    loadChildren: () => import('./pages/admin-dashboard/admin-dashboard.module').then( m => m.AdminDashboardPageModule),
+    canActivate: [AdminGuard]
   },
   {
     path: 'user-dashboard',
-    loadChildren: () => import('./pages/user-dashboard/user-dashboard.module').then( m => m.UserDashboardPageModule)
+    loadChildren: () => import('./pages/user-dashboard/user-dashboard.module').then( m => m.UserDashboardPageModule),
+    canActivate: [CanReadGuard]
   },
 ];
 
