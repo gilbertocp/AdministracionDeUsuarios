@@ -59,6 +59,7 @@ export class CreateUserPage implements OnInit {
     
     if(!this.checkForm()) {
       this.presentAlert(this.errMessage);
+      return;
     }
 
     const loading = await this.loadingController.create({
