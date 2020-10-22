@@ -11,7 +11,7 @@ export class UsuarioAdministracionService {
   constructor(private db: AngularFirestore) { }
 
   getUsuarios() : Observable<UsuarioAdministracion[]>{
-    return this.db.collection<UsuarioAdministracion>('usuarios-administracion').valueChanges({idField: 'docId'});
+    return this.db.collection<UsuarioAdministracion>('usuarios-administracion', ref => ref.orderBy('nombres','asc')).valueChanges({idField: 'docId'});
   }
 
   addUsuario(usuario): Promise<DocumentReference> {

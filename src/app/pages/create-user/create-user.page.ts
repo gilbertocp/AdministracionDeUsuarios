@@ -80,8 +80,8 @@ export class CreateUserPage implements OnInit {
       uploadTask.then(async task => {
 
         const usuario: UsuarioAdministracion = {
-          nombres: this.nombres,
-          apellidos: this.apellidos,
+          nombres: this.nombres.toUpperCase(),
+          apellidos: this.apellidos.toUpperCase(),
           correo: this.correo,
           clave: this.clave,
           dni: this.dni,
