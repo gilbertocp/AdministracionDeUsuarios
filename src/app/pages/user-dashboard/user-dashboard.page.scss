@@ -1,10 +1,11 @@
 .userinfo {
-  margin-top: 0;
   display: flex;
+  border-bottom: 1px solid black;
 }
 
 .userinfo__img {
   width: 40%;
+  height: 100px;
 }
 
 .userinfo__data {

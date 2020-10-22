@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AngularFireStorage } from '@angular/fire/storage';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 import { Camera, Direction } from '@ionic-native/camera/ngx';
-import { AlertController } from '@ionic/angular';
+import { AlertController, LoadingController } from '@ionic/angular';
 import { Dni } from '../../models/dni.enum';
 import { UsuarioAdministracion } from '../../models/usuario-administracion';
 import { Utils } from '../../models/utils';
@@ -17,15 +17,15 @@ import { Router } from '@angular/router';
 })
 export class CreateUserPage implements OnInit {
 
-  nombres: string;
-  apellidos: string;
-  correo: string;
-  clave: string;
   dni: string;
   img: string;
+  clave: string;
+  correo: string;
+  nombres: string;
+  apellidos: string;
+  errMessage: string = '';
   imagePreviewUrl: string = 'assets/noimage.png';
   confirmarClave: string;
-  errMessage: string = '';
 
   constructor(
     private file: File,
@@ -34,6 +34,7 @@ export class CreateUserPage implements OnInit {
     private storage: AngularFireStorage,
     private barcodeScanner: BarcodeScanner,
     public alertController: AlertController,
+    public loadingController: LoadingController,
     private usuariosAdministracionSvc: UsuarioAdministracionService,
   ) { }
 
@@ -54,12 +55,18 @@ export class CreateUserPage implements OnInit {
     });
   }
 
-
-  createUser(): void {
+  async createUser() {
+    
     if(!this.checkForm()) {
       this.presentAlert(this.errMessage);
     }
-    
+
+    const loading = await this.loadingController.create({
+      message: 'Espere. . .',
+    });
+
+    await loading.present();
+
     this.file.readAsArrayBuffer(Utils.getDirectory(this.img), Utils.getFilename(this.img))
     .then(arrayBuffer => {
       const fileBlob = new Blob(
@@ -67,7 +74,7 @@ export class CreateUserPage implements OnInit {
         { type: 'image/jpg' }
       )
 
-      const storagePath = `images/${new Date()}__${Math.random().toString(36).substring(2)}`;
+      const storagePath = `images/${new Date().toLocaleDateString()}__${Math.random().toString(36).substring(2)}`;
       const uploadTask = this.storage.upload(storagePath, fileBlob);
 
       uploadTask.then(async task => {
@@ -88,6 +95,9 @@ export class CreateUserPage implements OnInit {
         })
         .catch(() => {
           this.presentAlert('No se ha podido registrar el usuario, intentelo más tarde');
+        })
+        .finally(() => {
+          loading.dismiss();
         });
 
       });
@@ -191,4 +201,5 @@ export class CreateUserPage implements OnInit {
 
     await alert.present();
   }
+
 }

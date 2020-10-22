@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ActionSheetController } from '@ionic/angular';
+import { ActionSheetController, LoadingController } from '@ionic/angular';
 import { AuthService } from '../../services/auth.service';
 import { UsuarioAdministracionService } from '../../services/usuario-administracion.service';
 
@@ -18,7 +18,8 @@ export class UserDashboardPage implements OnInit {
     private router: Router,
     private actionSheetController: ActionSheetController,
     public authSvc: AuthService,
-    private usuarioAdministracionSvc: UsuarioAdministracionService
+    private usuarioAdministracionSvc: UsuarioAdministracionService,
+    public loadingController: LoadingController,
   ) {  
     this.authSvc.user$.subscribe(user => {
       if(user.data.perfil === 'admin') {
@@ -30,6 +31,7 @@ export class UserDashboardPage implements OnInit {
   }
 
   ngOnInit() {
+    this.presentLoading();
     this.usuarioAdministracionSvc.getUsuarios()
     .subscribe(users => {
       this.usuarios = users;
@@ -49,5 +51,14 @@ export class UserDashboardPage implements OnInit {
       }]
     });
     await actionSheet.present();
+  }
+
+  async presentLoading() {
+    const loading = await this.loadingController.create({
+      message: 'Cargando...',
+      duration: 1500,
+      spinner: 'bubbles'
+    });
+    await loading.present();
   }
 }

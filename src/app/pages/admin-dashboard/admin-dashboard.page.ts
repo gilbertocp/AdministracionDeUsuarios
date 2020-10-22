@@ -26,7 +26,7 @@ export class AdminDashboardPage implements OnInit {
 
     this.authSvc.user$.subscribe(user => {
       this.usuario = {...user.data, docId: user.id};
-      this.loadingElement.onDidDismiss();
+      this.loadingElement.dismiss();
     });
   }
 
@@ -41,7 +41,8 @@ export class AdminDashboardPage implements OnInit {
         text: 'Cerrar Sesión',
         icon: 'log-out',
         handler: () => {
-          console.log('Delete clicked');
+          this.authSvc.logout();
+          this.router.navigate(['/login']); 
         }
       }]
     });
