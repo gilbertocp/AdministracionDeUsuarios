@@ -18,7 +18,7 @@ export class CanReadGuard implements CanActivate {
   canActivate(): Observable<boolean>{
       return this.authSvc.user$.pipe(
         take(1),
-        map(user => user && this.authSvc.canRead(user) ? true: false), 
+        map(user => user && this.authSvc.canRead(user.data) ? true: false), 
         tap(canView => {
           if(!canView)
             console.log('Must have permission to view content');

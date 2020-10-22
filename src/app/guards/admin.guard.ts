@@ -19,7 +19,9 @@ export class AdminGuard implements CanActivate {
   canActivate(): Observable<boolean> {
     return this.authSvc.user$.pipe(
       take(1),
-      map(user => user && user.perfil === 'admin'? true: false), 
+      map(user => {
+        return user && user.data.perfil === 'admin'
+      }), 
       tap(isAdmin => {
         if(!isAdmin) {
           console.log('Access Denied - Admins Only');

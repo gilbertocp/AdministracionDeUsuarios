@@ -1,9 +1,34 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>adminDashboard</ion-title>
+  <ion-toolbar color="secondary">
+    <ion-title>Usuario Administrador</ion-title>
+    <ion-buttons slot="end">
+      <ion-button fill="clear" (click)="presentActionSheet()">
+        <ion-icon name="ellipsis-vertical-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-
+  <ul *ngIf="usuario" class="lista">
+    <li>
+      <img src="assets/noimage.png" style="border-radius: 19px;" width="200" height="200" alt="img">
+    </li>
+    <li>
+      <ion-icon name="mail"></ion-icon>
+      <span>{{usuario.correo}}</span>
+    </li>
+    <li>
+      <ion-icon name="people-sharp"></ion-icon>
+      <span>{{usuario.perfil}}</span>
+    </li>
+  </ul>
+  <div class="buttons-wrapper" *ngIf="usuario">
+    <ion-button expand="full" class="admin-btn" routerLink="/create-user">
+      Alta Usuario
+    </ion-button>
+    <ion-button expand="full" class="admin-btn" color="tertiary" (click)="verListado(usuario)">
+      Listado Usuario
+    </ion-button>
+  </div>
 </ion-content>

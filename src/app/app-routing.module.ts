@@ -25,6 +25,11 @@ const routes: Routes = [
     loadChildren: () => import('./pages/user-dashboard/user-dashboard.module').then( m => m.UserDashboardPageModule),
     canActivate: [CanReadGuard]
   },
+  {
+    path: 'create-user',
+    loadChildren: () => import('./pages/create-user/create-user.module').then( m => m.CreateUserPageModule),
+    canActivate: [AdminGuard]
+  },
 ];
 
 @NgModule({

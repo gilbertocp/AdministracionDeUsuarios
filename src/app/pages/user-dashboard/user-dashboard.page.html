@@ -1,6 +1,18 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>userDashboard</ion-title>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start" *ngIf="esAdmin">
+      <ion-back-button
+        icon="chevron-back"
+        defaultHref="/user-dashboard">
+      </ion-back-button>
+    </ion-buttons>
+
+    <ion-buttons slot="end">
+      <ion-button fill="clear" (click)="presentActionSheet()">
+        <ion-icon name="ellipsis-vertical-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Listado De Usuarios</ion-title>
   </ion-toolbar>
 </ion-header>
 

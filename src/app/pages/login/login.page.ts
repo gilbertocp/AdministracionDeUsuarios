@@ -28,8 +28,8 @@ export class LoginPage implements OnInit {
 
     this.authSvc.login(this.email, this.password)
     .then(() => {
-      localStorage.setItem('cred_ad_usuarios', Math.random().toString(36).slice(-8));
-      this.router.navigate(['/home']);
+      localStorage.setItem('cred_ad_usuarios', Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8));
+      this.router.navigate(['admin-dashboard']);
     })
     .catch(() => this.displayErrorToast('No se ha podido iniciar sesión, verifique que el usuario y la clave esten ingresado correctamente'))
     .finally(() => this.spinner = false);   
