@@ -1,0 +1,18 @@
+.userinfo {
+  margin-top: 0;
+  display: flex;
+}
+
+.userinfo__img {
+  width: 40%;
+}
+
+.userinfo__data {
+  width: 60%;
+  padding: 0 0 0 10px;
+  font-size: 10px;
+}
+
+.userinfo__info {
+  font-size: 13px;
+}

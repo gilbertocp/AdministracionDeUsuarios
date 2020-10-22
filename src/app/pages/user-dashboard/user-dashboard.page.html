@@ -17,5 +17,17 @@
 </ion-header>
 
 <ion-content>
-
+  <ion-list *ngIf="usuarios">
+    <div class="userinfo" *ngFor="let usuario of usuarios">
+      <div class="userinfo__img">
+        <img [src]="usuario.imgUrl" alt="">
+      </div>
+      <div class="userinfo__data">
+        <h5 class="userinfo__info"><ion-icon name="list"></ion-icon> {{usuario.nombres}}</h5>
+        <h5 class="userinfo__info"><ion-icon name="list"></ion-icon> {{usuario.apellidos}}</h5>
+        <h5 class="userinfo__info"><ion-icon name="key"></ion-icon> {{usuario.dni}}</h5>
+        <h5 class="userinfo__info"><ion-icon name="mail"></ion-icon> {{usuario.correo}}</h5>
+      </div>
+    </div>
+  </ion-list>
 </ion-content>

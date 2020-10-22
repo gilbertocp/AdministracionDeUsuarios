@@ -11,6 +11,7 @@ import { UsuarioAdministracionService } from '../../services/usuario-administrac
 })
 export class UserDashboardPage implements OnInit {
 
+  usuarios = [];
   esAdmin = false;
 
   constructor(
@@ -31,7 +32,7 @@ export class UserDashboardPage implements OnInit {
   ngOnInit() {
     this.usuarioAdministracionSvc.getUsuarios()
     .subscribe(users => {
-      console.log(users);
+      this.usuarios = users;
     });
   }
 
