@@ -6,6 +6,9 @@ import { AlertController } from '@ionic/angular';
 import { Dni } from '../../models/dni.enum';
 import { UsuarioAdministracion } from '../../models/usuario-administracion';
 import { Utils } from '../../models/utils';
+import { File } from '@ionic-native/file/ngx';
+import { UsuarioAdministracionService } from '../../services/usuario-administracion.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-create-user',
@@ -19,15 +22,19 @@ export class CreateUserPage implements OnInit {
   correo: string;
   clave: string;
   dni: string;
-  fotoUrl: string = 'assets/noimage.png';
+  img: string;
+  imagePreviewUrl: string = 'assets/noimage.png';
   confirmarClave: string;
   errMessage: string = '';
 
   constructor(
-    private barcodeScanner: BarcodeScanner,
+    private file: File,
     private camera: Camera,
+    private router: Router,
     private storage: AngularFireStorage,
-    public alertController: AlertController
+    private barcodeScanner: BarcodeScanner,
+    public alertController: AlertController,
+    private usuariosAdministracionSvc: UsuarioAdministracionService,
   ) { }
 
   ngOnInit() {
@@ -50,31 +57,74 @@ export class CreateUserPage implements OnInit {
 
   createUser(): void {
     if(!this.checkForm()) {
-      this.presentAlert();
+      this.presentAlert(this.errMessage);
     }
-
     
+    this.file.readAsArrayBuffer(Utils.getDirectory(this.img), Utils.getFilename(this.img))
+    .then(arrayBuffer => {
+      const fileBlob = new Blob(
+        [ arrayBuffer ],
+        { type: 'image/jpg' }
+      )
+
+      const storagePath = `images/${new Date()}__${Math.random().toString(36).substring(2)}`;
+      const uploadTask = this.storage.upload(storagePath, fileBlob);
+
+      uploadTask.then(async task => {
+
+        const usuario: UsuarioAdministracion = {
+          nombres: this.nombres,
+          apellidos: this.apellidos,
+          correo: this.correo,
+          clave: this.clave,
+          dni: this.dni,
+          imgUrl: await task.ref.getDownloadURL()
+        };
+
+        this.usuariosAdministracionSvc.addUsuario(usuario)
+        .then(() => {
+          this.presentAlert('Se ha registrado el usuario exitosamente')
+          this.router.navigate(['/admin-dashboard']);
+        })
+        .catch(() => {
+          this.presentAlert('No se ha podido registrar el usuario, intentelo más tarde');
+        });
+
+      });
+    });
   }
 
   takePic(): void {
     this.camera.getPicture({
       cameraDirection: Direction.BACK,
       correctOrientation: true,
-      destinationType: this.camera.DestinationType.DATA_URL
+      destinationType: this.camera.DestinationType.FILE_URI
     })
     .then(imageData => {
-      this.fotoUrl = 'data:image/jpeg;base64,'+ imageData;
+      this.img = imageData;
+      
+      this.file
+      .readAsDataURL(Utils.getDirectory(imageData), Utils.getFilename(imageData))
+      .then(base64Url => {
+        this.imagePreviewUrl = base64Url;
+      }).catch(err => console.log(err));
     });
   }
 
   takeFromGallery(): void {
     this.camera.getPicture({
-      destinationType: this.camera.DestinationType.DATA_URL,
+      destinationType: this.camera.DestinationType.FILE_URI,
       sourceType: this.camera.PictureSourceType.PHOTOLIBRARY,
       correctOrientation: true
     })
     .then(imageData => {
-      this.fotoUrl = 'data:image/jpeg;base64,'+ imageData;
+      this.img = Utils.getDirectory(imageData) + Utils.getFilenameGallery(imageData)
+      
+      this.file
+      .readAsDataURL(Utils.getDirectory(imageData), Utils.getFilenameGallery(imageData))
+      .then(base64Url => {
+        this.imagePreviewUrl = base64Url;
+      }).catch(err => console.log(err));
     });
   }
 
@@ -83,6 +133,7 @@ export class CreateUserPage implements OnInit {
     let noEmptyValues = false;
     let validEmail = false;
     let samePassword = false;
+    let photoUploaded = false;
 
     if(
       !Utils.isEmpty(this.correo) &&
@@ -95,6 +146,10 @@ export class CreateUserPage implements OnInit {
       noEmptyValues = true;
       if(Utils.validEmail(this.correo)) {
         validEmail = true;
+      }
+
+      if(!Utils.isEmpty(this.img)) {
+        photoUploaded = true;
       }
 
       if(Utils.samePassword(this.clave, this.confirmarClave)) {
@@ -117,14 +172,19 @@ export class CreateUserPage implements OnInit {
       return false;
     }
 
+    if(!photoUploaded) {
+      this.errMessage += 'Tiene que subir una imagen';
+      return false;
+    }
+
     if(noEmptyValues && samePassword && validEmail) {
       return true;
     }
   }
 
-  async presentAlert() {
+  async presentAlert(msj: string) {
     const alert = await this.alertController.create({
-      header: 'El formulario no es válido',
+      header: msj,
       message: this.errMessage,
       buttons: ['OK']
     });

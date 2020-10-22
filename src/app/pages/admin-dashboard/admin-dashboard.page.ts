@@ -30,14 +30,8 @@ export class AdminDashboardPage implements OnInit {
     });
   }
 
-  verListado(usuario: Usuario) {
-    const navExtras: NavigationExtras = {
-      queryParams:  {
-        role: usuario.perfil
-      }
-    }
-
-    this.router.navigate(['/user-dashboard'], navExtras);
+  verListado() {
+    this.router.navigate(['/user-dashboard']);
   }
 
   async presentActionSheet() {

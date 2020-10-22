@@ -4,5 +4,6 @@ export interface UsuarioAdministracion {
   correo: string,
   clave: string,
   dni: string,
-  imgUrl?: string
+  imgUrl?: string,
+  docId?: string
 }

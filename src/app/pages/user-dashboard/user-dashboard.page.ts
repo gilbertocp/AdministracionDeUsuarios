@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ActionSheetController } from '@ionic/angular';
 import { AuthService } from '../../services/auth.service';
+import { UsuarioAdministracionService } from '../../services/usuario-administracion.service';
 
 @Component({
   selector: 'app-user-dashboard',
@@ -10,22 +11,28 @@ import { AuthService } from '../../services/auth.service';
 })
 export class UserDashboardPage implements OnInit {
 
-  esAdmin: boolean = false;
+  esAdmin = false;
 
   constructor(
-    private route: ActivatedRoute,
     private router: Router,
     private actionSheetController: ActionSheetController,
-    private authSvc: AuthService
-  ) { 
-    this.route.queryParams.subscribe(params => {
-      if(params && params.role === 'admin') {
+    public authSvc: AuthService,
+    private usuarioAdministracionSvc: UsuarioAdministracionService
+  ) {  
+    this.authSvc.user$.subscribe(user => {
+      if(user.data.perfil === 'admin') {
         this.esAdmin = true;
+      } else {
+        this.esAdmin = false;
       }
-    })
+    });
   }
 
   ngOnInit() {
+    this.usuarioAdministracionSvc.getUsuarios()
+    .subscribe(users => {
+      console.log(users);
+    });
   }
 
   async presentActionSheet() {
@@ -36,7 +43,7 @@ export class UserDashboardPage implements OnInit {
         icon: 'log-out',
         handler: () => {
           this.authSvc.logout();
-          this.router.navigate(['/login']);
+          this.router.navigate(['/login']); 
         }
       }]
     });

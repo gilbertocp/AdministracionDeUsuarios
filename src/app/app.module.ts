@@ -18,6 +18,8 @@ import { FormsModule } from '@angular/forms';
 
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 import { Camera } from '@ionic-native/camera/ngx';
+import { File } from '@ionic-native/file/ngx';
+
 
 @NgModule({
   declarations: [AppComponent],
@@ -37,7 +39,8 @@ import { Camera } from '@ionic-native/camera/ngx';
     SplashScreen,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     BarcodeScanner,
-    Camera
+    Camera,
+    File
   ],
   bootstrap: [AppComponent]
 })
